@@ -1,6 +1,6 @@
 ﻿export const salon = {
   name: "Velvet & Fade",
-  tagline: "Where Every Style Finds Home",
+  tagline: "Where Every Style Becomes Your Signature",
   phone: "+2348123456789",
   whatsappPhone: "2348123456789",
   email: "hello@velvetandfade.ng",
@@ -24,10 +24,36 @@
   founderBio:
     "Adaeze trained at the London School of Beauty before returning to Lagos with a vision: a salon where men and women get the same quality of attention, under one roof. After five years building Velvet & Fade from a single chair in Lekki, she now leads a team of 12 stylists and barbers.",
   stats: [
-    { label: "Clients served", value: "8,000+" },
-    { label: "Years in Lekki", value: "5" },
-    { label: "Stylists & barbers", value: "12" },
-    { label: "Google rating", value: "4.8★" },
+    { label: "Clients served", value: "8,000+", icon: "users" },
+    { label: "Years in Lekki", value: "5", icon: "calendar" },
+    { label: "Stylists & barbers", value: "12", icon: "scissors" },
+    { label: "Google rating", value: "4.8", icon: "star", suffix: "★" },
+  ],
+  testimonials: [
+    {
+      name: "Chioma Adebayo",
+      text: "The best salon experience I've had in Lagos. The attention to detail is unmatched — every visit feels like a luxury retreat.",
+      rating: 5,
+      service: "Colour & Highlights",
+    },
+    {
+      name: "Emeka Okoro",
+      text: "Tunde is a master at what he does. My fade has never looked this clean. Velvet & Fade is the only place I trust.",
+      rating: 5,
+      service: "Skin Fade",
+    },
+    {
+      name: "Fatima Ibrahim",
+      text: "From the moment you walk in, the atmosphere is calm and inviting. My braids were done perfectly and the spa treatment was divine.",
+      rating: 5,
+      service: "Box Braids & Spa",
+    },
+    {
+      name: "Oluwaseun Martins",
+      text: "I brought my partner here for our anniversary and we both left feeling incredible. The nail art is stunning too!",
+      rating: 5,
+      service: "Gel Nails",
+    },
   ],
 };
 
@@ -322,7 +348,6 @@ export const signatureServices = [
   serviceCategories.braiding.services[0],
 ];
 
-// Mock booked slots: YYYY-MM-DD => Set of "HH:MM"
 export const mockBookedSlots = {
   [new Date().toISOString().slice(0, 10)]: new Set(["10:00", "14:00", "16:00"]),
 };
@@ -370,4 +395,17 @@ export const team = [
     image:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80",
   },
+];
+
+export const galleryImages = [
+  { src: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80", aspect: "tall" },
+  { src: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", aspect: "wide" },
+  { src: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&q=80", aspect: "square" },
+  { src: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80", aspect: "tall" },
+  { src: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=80", aspect: "wide" },
+  { src: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80", aspect: "square" },
+  { src: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80", aspect: "wide" },
+  { src: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80", aspect: "tall" },
+  { src: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80", aspect: "square" },
+  { src: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=600&q=80", aspect: "tall" },
 ];

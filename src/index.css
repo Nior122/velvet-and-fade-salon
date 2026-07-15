@@ -1,19 +1,17 @@
 ﻿@import "tailwindcss";
 
 @theme {
-  --color-brown: #2E2420;
-  --color-brown-soft: #4A3D37;
-  --color-rose: #C4908A;
-  --color-rose-deep: #A66F68;
-  --color-sage: #8FA98F;
-  --color-sage-deep: #6B8A6B;
-  --color-ivory: #FAF6F1;
-  --color-blush: #F0E4DC;
-  --color-gold: #B8A07A;
+  --color-espresso: #2A1E1B;
+  --color-ivory: #FAF7F2;
+  --color-champagne: #C9A66B;
+  --color-rose: #D79AA5;
+  --color-copper: #B86B4B;
+  --color-charcoal: #3C302B;
+  --color-success: #6E9A7C;
+  --color-blush: #F0E8DF;
 
-  --font-display: "DM Serif Display", Georgia, serif;
-  --font-body: "DM Sans", system-ui, sans-serif;
-  --font-label: "DM Sans", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
 @layer base {
@@ -22,7 +20,7 @@
   }
   body {
     font-family: var(--font-body);
-    color: var(--color-brown);
+    color: var(--color-charcoal);
     background: var(--color-ivory);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -31,7 +29,7 @@
     font-family: var(--font-display);
   }
   ::selection {
-    background-color: var(--color-rose);
+    background-color: var(--color-champagne);
     color: white;
   }
 }

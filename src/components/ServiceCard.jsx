@@ -12,8 +12,8 @@ export default function ServiceCard({ service, onSelect }) {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     setMouse({
-      x: (e.clientX - rect.left - rect.width / 2) / 20,
-      y: (e.clientY - rect.top - rect.height / 2) / 20,
+      x: (e.clientX - rect.left - rect.width / 2) / 24,
+      y: (e.clientY - rect.top - rect.height / 2) / 24,
     });
   };
   const handleMouseLeave = () => setMouse({ x: 0, y: 0 });
@@ -29,7 +29,7 @@ export default function ServiceCard({ service, onSelect }) {
       transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       animate={{ x: mouse.x, y: mouse.y }}
       onClick={() => onSelect?.(service)}
-      className="group cursor-pointer rounded-2xl bg-white overflow-hidden shadow-[0_2px_16px_rgba(46,36,32,0.05)] hover:shadow-[0_10px_40px_rgba(46,36,32,0.1)] transition-shadow duration-500 flex flex-col"
+      className="group cursor-pointer rounded-[24px] bg-white overflow-hidden shadow-[0_2px_20px_rgba(42,30,27,0.04)] hover:shadow-[0_20px_60px_rgba(42,30,27,0.1)] transition-shadow duration-500 flex flex-col"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-blush">
         {!loaded && <div className="absolute inset-0 bg-blush animate-pulse" />}
@@ -40,22 +40,23 @@ export default function ServiceCard({ service, onSelect }) {
           onLoad={() => setLoaded(true)}
           className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brown/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-4">
+        <div className="absolute inset-0 bg-gradient-to-t from-espresso/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-5">
           <span className="translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 text-ivory text-[12px] font-semibold uppercase tracking-wider flex items-center gap-1.5">
             Book Now <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-[17px] text-brown leading-snug">{service.name}</h3>
-          <span className="text-[15px] font-bold text-rose-deep shrink-0">{formatPrice(service.price)}</span>
+      <div className="flex flex-col flex-1 p-6">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="font-display text-[19px] text-espresso leading-snug font-medium group-hover:text-copper transition-colors">
+            {service.name}
+          </h3>
+          <span className="text-[15px] font-semibold text-copper shrink-0">{formatPrice(service.price)}</span>
         </div>
-        <p className="mt-2 text-[13px] text-brown/45 leading-relaxed flex-1">{service.description}</p>
-        <div className="mt-3 pt-3 border-t border-brown/5">
-          <span className="text-[11px] uppercase tracking-[0.15em] text-brown/30 font-semibold">{formatDuration(service.duration)}</span>
+        <p className="mt-2.5 text-[13px] text-charcoal/40 leading-relaxed flex-1 font-light">{service.description}</p>
+        <div className="mt-4 pt-4 border-t border-charcoal/5">
+          <span className="text-[11px] uppercase tracking-[0.15em] text-charcoal/25 font-medium">{formatDuration(service.duration)}</span>
         </div>
       </div>
     </motion.div>

@@ -5,8 +5,12 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Services from "./pages/Services";
-import Booking from "./pages/Booking";
+import Gallery from "./pages/Gallery";
+import Team from "./pages/Team";
+import Pricing from "./pages/Pricing";
 import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Booking from "./pages/Booking";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -16,7 +20,7 @@ function ScrollToTop() {
 
 function PageTransition({ children }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}>
       {children}
     </motion.div>
   );
@@ -29,8 +33,12 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Home /></PageTransition>} />
         <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-        <Route path="/booking" element={<PageTransition><Booking /></PageTransition>} />
+        <Route path="/gallery" element={<PageTransition><Gallery /></PageTransition>} />
+        <Route path="/team" element={<PageTransition><Team /></PageTransition>} />
+        <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/booking" element={<PageTransition><Booking /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );
@@ -49,14 +57,14 @@ function AppLoader({ onComplete }) {
   }, [onComplete]);
 
   return (
-    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.35 }} className="fixed inset-0 z-[100] bg-ivory flex flex-col items-center justify-center">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-center">
-        <span className="font-display text-[30px] text-brown tracking-[-0.02em]">
-          Velvet <span className="italic text-rose">&</span> Fade
+    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="fixed inset-0 z-[100] bg-espresso flex flex-col items-center justify-center">
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
+        <span className="font-display text-[36px] text-ivory tracking-[-0.02em] font-light">
+          Velvet <span className="italic text-champagne">&</span> Fade
         </span>
       </motion.div>
-      <div className="mt-8 w-28 h-[2px] bg-blush rounded-full overflow-hidden">
-        <motion.div className="h-full bg-rose rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
+      <div className="mt-10 w-32 h-[2px] bg-ivory/10 rounded-full overflow-hidden">
+        <motion.div className="h-full bg-champagne rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
       </div>
     </motion.div>
   );
