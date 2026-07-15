@@ -1,18 +1,17 @@
 ﻿@import "tailwindcss";
 
 @theme {
-  --color-espresso: #2C2220;
-  --color-espresso-soft: #3D302C;
-  --color-mauve: #C4A08A;
-  --color-mauve-deep: #A67B5B;
-  --color-ivory: #FAF5F0;
-  --color-parchment: #F2EBE3;
-  --color-champagne: #C9B99A;
-  --color-plum: #6B3A4A;
+  --color-black: #111111;
+  --color-white: #FFFFFF;
+  --color-lime: #C8FF00;
+  --color-gray: #666666;
+  --color-gray-light: #E5E5E5;
+  --color-offwhite: #F5F5F3;
 
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-label: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-label: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "Space Mono", monospace;
 }
 
 @layer base {
@@ -21,8 +20,8 @@
   }
   body {
     font-family: var(--font-body);
-    color: var(--color-espresso);
-    background: var(--color-ivory);
+    color: var(--color-black);
+    background: var(--color-offwhite);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -30,7 +29,7 @@
     font-family: var(--font-display);
   }
   ::selection {
-    background-color: var(--color-mauve);
-    color: var(--color-espresso);
+    background-color: var(--color-lime);
+    color: var(--color-black);
   }
 }

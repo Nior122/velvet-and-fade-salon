@@ -24,34 +24,26 @@ export default function Services() {
   const currentCategories = filtered(tabs.find((t) => t.key === activeTab).filter);
 
   return (
-    <main className="pt-[72px] sm:pt-[80px] pb-20 sm:pb-32 bg-ivory min-h-screen">
-      <div className="bg-espresso relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)", backgroundSize: "20px 20px" }} />
-        <div className="relative mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 py-16 sm:py-24">
+    <main className="pt-[64px] sm:pt-[72px] pb-20 sm:pb-32 bg-offwhite min-h-screen">
+      <div className="bg-black relative">
+        <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 py-16 sm:py-24">
           <SectionReveal>
-            <span className="font-label text-[11px] font-semibold uppercase tracking-[0.3em] text-champagne">Our Menu</span>
-            <h1 className="font-display text-[38px] sm:text-[50px] lg:text-[58px] font-semibold text-ivory mt-3 tracking-[-0.03em] leading-[0.95]">Services</h1>
-            <p className="mt-4 text-ivory/45 max-w-md text-[15px] leading-relaxed">From a quick trim to a full day of pampering — select any service to book instantly.</p>
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.35em] text-lime">Our Menu</span>
+            <h1 className="font-display text-[36px] sm:text-[48px] lg:text-[56px] font-extrabold uppercase text-white mt-3 tracking-[-0.04em] leading-[0.95]">Services</h1>
+            <p className="mt-4 text-white/40 max-w-md text-[14px] leading-relaxed">Select any service to book instantly.</p>
           </SectionReveal>
 
           <SectionReveal delay={0.1}>
-            <div className="flex gap-2 mt-10">
+            <div className="flex gap-0 mt-10 border border-white/15 inline-flex">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`relative px-5 py-2.5 rounded-full font-label text-[12px] font-semibold uppercase tracking-[0.15em] transition-colors duration-300 ${
-                    activeTab === tab.key ? "text-espresso" : "text-ivory/35 hover:text-ivory/60"
+                  className={`px-6 py-2.5 font-label text-[11px] font-bold uppercase tracking-[0.15em] transition-all duration-200 ${
+                    activeTab === tab.key ? "bg-lime text-black" : "text-white/40 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  {activeTab === tab.key && (
-                    <motion.span
-                      layoutId="service-tab"
-                      className="absolute inset-0 bg-champagne rounded-full"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative z-10">{tab.label}</span>
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -66,7 +58,7 @@ export default function Services() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             {currentCategories.map(([key, cat]) => (
               <CategorySection key={key} category={cat} categoryKey={key} onServiceSelect={handleServiceSelect} />
