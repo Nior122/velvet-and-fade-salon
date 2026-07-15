@@ -41,17 +41,7 @@ import {
 } from "../hooks/useBooking";
 import ConfirmationTicket from "../components/ConfirmationTicket";
 
-/* ───────────── flat list of every service ───────────── */
-const allServices = Object.values(serviceCategories).flatMap(
-  (cat) => cat.services
-);
-
-/* ───────────── slide variants ───────────── */
-const slide = {
-  enter: (dir) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
-  center: { x: 0, opacity: 1 },
-  exit: (dir) => ({ x: dir < 0 ? 300 : -300, opacity: 0 }),
-};
+const allServices = Object.values(serviceCategories).flatMap((c) => c.services);
 
 /* ═══════════════════════════════════════════════════════
    BOOKING PAGE
@@ -62,7 +52,6 @@ export default function Booking() {
   const preselected = location.state?.selectedService || null;
 
   const [step, setStep] = useState(preselected ? 2 : 1);
-  const [direction, setDirection] = useState(1);
   const [service, setService] = useState(preselected);
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
@@ -73,42 +62,31 @@ export default function Booking() {
   const [confirmed, setConfirmed] = useState(false);
   const [bookingId] = useState(generateBookingId);
 
-  const goNext = () => {
-    setDirection(1);
-    setStep((s) => s + 1);
-  };
-  const goBack = () => {
-    setDirection(-1);
-    setStep((s) => s - 1);
-  };
+  const currentStep = confirmed ? 3 : step;
 
-  /* ── step 1: pick service ── */
-  const pickService = (svc) => {
-    setService(svc);
-    goNext();
-  };
+  const goNext = () => setStep((s) => Math.min(s + 1, 3));
+  const goBack = () => setStep((s) => Math.max(s - 1, 1));
 
-  /* ── step 2: pick date/time ── */
+  const pickService = (svc) => { setService(svc); goNext(); };
+
   const timeSlots = useMemo(() => {
     if (!service || !date) return [];
     const dow = getDay(date);
-    const open = dow === 0 ? salon.openHour : salon.openHour;
     const close = dow === 0 ? 18 : salon.closeHour;
-    return generateTimeSlots(open, close, service.duration);
+    return generateTimeSlots(salon.openHour, close, service.duration);
   }, [service, date]);
 
-  const pickTime = (slot) => {
-    setTime(slot);
-    goNext();
-  };
+  const pickTime = (slot) => { setTime(slot); goNext(); };
 
-  /* ── step 3: validate & confirm ── */
   const validate = () => {
     const e = {};
     if (!name.trim()) e.name = "Name is required";
     if (!phone.trim()) {
       e.phone = "Phone number is required";
-    } else if (!/^\+?234\d{10}$/.test(phone.replace(/\s/g, "")) && !/^0\d{10}$/.test(phone.replace(/\s/g, ""))) {
+    } else if (
+      !/^\+?234\d{10}$/.test(phone.replace(/\s/g, "")) &&
+      !/^0\d{10}$/.test(phone.replace(/\s/g, ""))
+    ) {
       e.phone = "Enter a valid Nigerian phone number";
     }
     setErrors(e);
@@ -120,26 +98,26 @@ export default function Booking() {
     setConfirmed(true);
   };
 
-  const formattedDate = date ? format(date, "EEEE, d MMMM yyyy") : "";
-  const formattedTime = time ? formatSlotTime(time) : "";
+  const fmtDate = date ? format(date, "EEEE, d MMMM yyyy") : "";
+  const fmtTime = time ? formatSlotTime(time) : "";
 
   const whatsappUrl = confirmed
     ? buildWhatsAppLink(salon.whatsappPhone, {
         salonName: salon.name,
         serviceName: service.name,
-        date: formattedDate,
-        time: formattedTime,
+        date: fmtDate,
+        time: fmtTime,
         customerName: name,
       })
     : "";
 
   const copyDetails = () => {
-    const text = `${salon.name} Booking\nService: ${service.name}\nDate: ${formattedDate}\nTime: ${formattedTime}\nName: ${name}\nRef: ${bookingId}`;
+    const text = `${salon.name} Booking\nService: ${service.name}\nDate: ${fmtDate}\nTime: ${fmtTime}\nName: ${name}\nRef: ${bookingId}`;
     navigator.clipboard.writeText(text).catch(() => {});
   };
 
   const smsUrl = `sms:${salon.phone}?body=${encodeURIComponent(
-    `Booking at ${salon.name}: ${service?.name}, ${formattedDate} at ${formattedTime}. Name: ${name}`
+    `Booking at ${salon.name}: ${service?.name}, ${fmtDate} at ${fmtTime}. Name: ${name}`
   )}`;
 
   const reset = () => {
@@ -152,111 +130,102 @@ export default function Booking() {
     setEmail("");
     setErrors({});
     setConfirmed(false);
-    setDirection(1);
   };
 
-  /* ── Step indicator ── */
-  const StepIndicator = () => {
-    const steps = ["Service", "Date & Time", "Details"];
-    const current = confirmed ? 3 : step - 1;
+  /* ── Progress bar ── */
+  const ProgressBar = () => {
+    const pct = confirmed ? 100 : ((currentStep - 1) / 2) * 100;
+    const labels = ["Service", "Date & Time", "Details"];
     return (
-      <div className="flex items-center justify-center gap-2 mb-10">
-        {steps.map((label, i) => (
-          <div key={label} className="flex items-center gap-2">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                i < current
-                  ? "bg-copper text-charcoal"
-                  : i === current
-                  ? "bg-charcoal text-cream"
-                  : "bg-stone/20 text-stone"
-              }`}
-            >
-              {i < current ? <Check className="h-4 w-4" /> : i + 1}
-            </div>
+      <div className="mb-10">
+        {/* Bar */}
+        <div className="relative h-[3px] bg-sand rounded-full overflow-hidden">
+          <motion.div
+            className="absolute inset-y-0 left-0 bg-forest rounded-full"
+            initial={false}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          />
+        </div>
+        {/* Labels */}
+        <div className="flex justify-between mt-3">
+          {labels.map((label, i) => (
             <span
-              className={`hidden sm:block text-xs font-label uppercase tracking-wider ${
-                i <= current ? "text-charcoal" : "text-stone"
+              key={label}
+              className={`font-label text-[10px] uppercase tracking-[0.2em] font-600 transition-colors duration-300 ${
+                i < currentStep ? "text-forest" : i === currentStep ? "text-ink" : "text-ink/25"
               }`}
             >
               {label}
             </span>
-            {i < steps.length - 1 && (
-              <div
-                className={`w-8 sm:w-12 h-px ${
-                  i < current ? "bg-copper" : "bg-stone/20"
-                }`}
-              />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
   };
 
-  /* ─── Confirmed success state ─── */
+  /* ─── Confirmed ─── */
   if (confirmed) {
     return (
-      <main className="pt-28 sm:pt-32 pb-20 bg-cream min-h-screen">
-        <div className="mx-auto max-w-2xl px-4 text-center">
+      <main className="pt-[72px] sm:pt-[80px] pb-20 bg-ivory min-h-screen">
+        <div className="mx-auto max-w-2xl px-5 text-center pt-12 sm:pt-16">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 18 }}
-            className="mx-auto mb-6 w-16 h-16 rounded-full bg-emerald/10 flex items-center justify-center"
+            initial={{ scale: 0, rotate: -10 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 16 }}
+            className="mx-auto mb-6 w-16 h-16 rounded-2xl bg-forest/10 flex items-center justify-center"
           >
-            <Check className="h-8 w-8 text-emerald" />
+            <Check className="h-7 w-7 text-forest" />
           </motion.div>
 
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-charcoal">
+          <h1 className="font-display text-[28px] sm:text-[36px] font-800 text-ink tracking-[-0.03em]">
             Booking Confirmed!
           </h1>
-          <p className="mt-2 text-stone text-sm">
-            Your appointment is locked in. Send us a quick WhatsApp to confirm.
+          <p className="mt-2 text-ink/50 text-[15px]">
+            Your appointment is locked in. Send us a quick message to confirm.
           </p>
 
           <div className="mt-8">
             <ConfirmationTicket
               service={service}
-              date={formattedDate}
-              time={formattedTime}
+              date={fmtDate}
+              time={fmtTime}
               customerName={name}
               bookingId={bookingId}
             />
           </div>
 
-          {/* Actions */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald text-cream font-semibold text-sm hover:bg-emerald/90 transition-colors shadow-lg"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#25D366] text-white font-display font-700 text-[13px] hover:bg-[#20BD5B] transition-all duration-300 shadow-[0_4px_20px_rgba(37,211,102,0.3)]"
             >
               <MessageSquare className="h-4 w-4" />
               Send via WhatsApp
             </a>
             <button
               onClick={copyDetails}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-charcoal/20 text-charcoal text-sm font-medium hover:bg-charcoal/5 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full border border-ink/12 text-ink text-[13px] font-label font-600 hover:bg-ink/5 transition-all duration-300"
             >
               <Copy className="h-4 w-4" />
               Copy Details
             </button>
             <a
               href={smsUrl}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-charcoal/20 text-charcoal text-sm font-medium hover:bg-charcoal/5 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full border border-ink/12 text-ink text-[13px] font-label font-600 hover:bg-ink/5 transition-all duration-300"
             >
               <Phone className="h-4 w-4" />
-              Send via SMS
+              SMS
             </a>
           </div>
 
           <button
             onClick={reset}
-            className="mt-8 text-sm text-copper hover:text-charcoal font-semibold transition-colors"
+            className="mt-8 text-[13px] text-forest hover:text-gold font-label font-600 transition-colors duration-300"
           >
-            Book Another Appointment
+            Book Another
           </button>
         </div>
       </main>
@@ -264,55 +233,47 @@ export default function Booking() {
   }
 
   return (
-    <main className="pt-28 sm:pt-32 pb-20 bg-cream min-h-screen">
-      <div className="mx-auto max-w-3xl px-4">
-        <StepIndicator />
+    <main className="pt-[72px] sm:pt-[80px] pb-20 bg-ivory min-h-screen">
+      <div className="mx-auto max-w-3xl px-5 pt-10 sm:pt-14">
+        <ProgressBar />
 
-        <AnimatePresence mode="wait" custom={direction}>
+        <AnimatePresence mode="wait">
           {/* ─── STEP 1: Service ─── */}
           {step === 1 && (
             <motion.div
               key="step1"
-              custom={direction}
-              variants={slide}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <h2 className="font-display text-2xl font-bold text-charcoal mb-6">
+              <h2 className="font-display text-[24px] sm:text-[28px] font-800 text-ink tracking-[-0.03em] mb-6">
                 Choose a Service
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {allServices.map((svc) => (
                   <button
                     key={svc.id}
                     onClick={() => pickService(svc)}
-                    className="w-full flex items-center gap-4 p-4 rounded-xl bg-white border border-stone/10 hover:border-copper/40 hover:shadow-md transition-all text-left group"
+                    className="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border border-ink/5 hover:border-forest/30 hover:shadow-[0_4px_24px_rgba(45,74,62,0.08)] transition-all duration-300 text-left group"
                   >
                     <img
                       src={svc.image}
                       alt={svc.name}
                       loading="lazy"
-                      className="w-14 h-14 rounded-lg object-cover shrink-0"
+                      className="w-14 h-14 rounded-xl object-cover shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-display font-bold text-charcoal group-hover:text-copper transition-colors">
+                      <p className="font-display font-700 text-ink group-hover:text-forest transition-colors duration-300 text-[15px]">
                         {svc.name}
                       </p>
-                      <p className="text-xs text-stone mt-0.5 truncate">
-                        {svc.description}
-                      </p>
+                      <p className="text-[12px] text-ink/40 mt-0.5 truncate">{svc.description}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-semibold text-copper">
-                        {formatPrice(svc.price)}
-                      </p>
-                      <p className="text-[11px] text-stone mt-0.5">
-                        {formatDuration(svc.duration)}
-                      </p>
+                      <p className="text-[14px] font-display font-700 text-forest">{formatPrice(svc.price)}</p>
+                      <p className="text-[11px] text-ink/35 mt-0.5 font-label">{formatDuration(svc.duration)}</p>
                     </div>
-                    <ArrowRight className="h-4 w-4 text-stone/40 group-hover:text-copper transition-colors shrink-0" />
+                    <ArrowRight className="h-4 w-4 text-ink/15 group-hover:text-forest transition-colors duration-300 shrink-0" />
                   </button>
                 ))}
               </div>
@@ -323,61 +284,52 @@ export default function Booking() {
           {step === 2 && (
             <motion.div
               key="step2"
-              custom={direction}
-              variants={slide}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <button
                 onClick={goBack}
-                className="flex items-center gap-1 text-sm text-stone hover:text-charcoal transition-colors mb-4"
+                className="flex items-center gap-1.5 text-[13px] text-ink/40 hover:text-ink font-label font-600 transition-colors duration-300 mb-5"
               >
                 <ChevronLeft className="h-4 w-4" /> Back
               </button>
 
-              {/* Selected service badge */}
               {service && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-stone/10 mb-6">
-                  <Sparkles className="h-4 w-4 text-copper shrink-0" />
-                  <span className="text-sm font-medium text-charcoal">
-                    {service.name}
-                  </span>
-                  <span className="text-xs text-stone ml-auto">
-                    {formatPrice(service.price)} &middot; {formatDuration(service.duration)}
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-ink/5 mb-6">
+                  <Sparkles className="h-4 w-4 text-gold shrink-0" />
+                  <span className="text-[14px] font-600 text-ink">{service.name}</span>
+                  <span className="text-[12px] text-ink/35 ml-auto font-label">
+                    {formatPrice(service.price)} · {formatDuration(service.duration)}
                   </span>
                 </div>
               )}
 
-              <h2 className="font-display text-2xl font-bold text-charcoal mb-6 flex items-center gap-2">
-                <CalendarDays className="h-5 w-5 text-copper" />
+              <h2 className="font-display text-[24px] sm:text-[28px] font-800 text-ink tracking-[-0.03em] mb-6">
                 Pick a Date
               </h2>
 
-              {/* Calendar */}
               <CalendarPicker
                 value={date}
-                onChange={(d) => {
-                  setDate(d);
-                  setTime(null);
-                }}
+                onChange={(d) => { setDate(d); setTime(null); }}
                 closedDays={salon.closedDays}
               />
 
-              {/* Time slots */}
               {date && (
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="mt-8"
                 >
-                  <h3 className="font-display text-lg font-bold text-charcoal mb-4 flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-copper" />
+                  <h3 className="font-display text-[18px] font-700 text-ink mb-4 flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-gold" />
                     Available Times
                   </h3>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+
+                  {/* Horizontal scrollable strip */}
+                  <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
                     {timeSlots.map((slot) => {
                       const available = isSlotAvailable(slot, date, mockBookedSlots);
                       const selected = time === slot;
@@ -386,15 +338,22 @@ export default function Booking() {
                           key={slot}
                           disabled={!available}
                           onClick={() => available && setTime(slot)}
-                          className={`py-2.5 px-2 rounded-lg text-sm font-medium transition-all ${
+                          className={`relative shrink-0 px-5 py-3 rounded-xl text-[13px] font-label font-600 transition-all duration-300 ${
                             !available
-                              ? "bg-stone/10 text-stone/40 cursor-not-allowed line-through"
+                              ? "bg-sand/50 text-ink/20 cursor-not-allowed line-through"
                               : selected
-                              ? "bg-copper text-charcoal ring-2 ring-copper ring-offset-2"
-                              : "bg-white border border-stone/15 hover:border-copper/40 hover:shadow-sm text-charcoal"
+                              ? "bg-forest text-ivory shadow-[0_4px_16px_rgba(45,74,62,0.25)]"
+                              : "bg-white border border-ink/8 text-ink hover:border-forest/30 hover:shadow-sm"
                           }`}
                         >
-                          {formatSlotTime(slot)}
+                          {selected && (
+                            <motion.span
+                              layoutId="time-selected"
+                              className="absolute inset-0 bg-forest rounded-xl"
+                              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                            />
+                          )}
+                          <span className="relative z-10">{formatSlotTime(slot)}</span>
                         </button>
                       );
                     })}
@@ -408,7 +367,7 @@ export default function Booking() {
                     >
                       <button
                         onClick={goNext}
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-copper text-charcoal font-semibold text-sm hover:bg-copper/90 transition-colors shadow-lg shadow-copper/20"
+                        className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-forest text-ivory font-display font-700 text-[13px] hover:bg-forest/90 transition-all duration-300 shadow-[0_4px_20px_rgba(45,74,62,0.25)]"
                       >
                         Continue <ArrowRight className="h-4 w-4" />
                       </button>
@@ -419,94 +378,69 @@ export default function Booking() {
             </motion.div>
           )}
 
-          {/* ─── STEP 3: Customer Details ─── */}
+          {/* ─── STEP 3: Details ─── */}
           {step === 3 && (
             <motion.div
               key="step3"
-              custom={direction}
-              variants={slide}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <button
                 onClick={goBack}
-                className="flex items-center gap-1 text-sm text-stone hover:text-charcoal transition-colors mb-4"
+                className="flex items-center gap-1.5 text-[13px] text-ink/40 hover:text-ink font-label font-600 transition-colors duration-300 mb-5"
               >
                 <ChevronLeft className="h-4 w-4" /> Back
               </button>
 
-              <h2 className="font-display text-2xl font-bold text-charcoal mb-6 flex items-center gap-2">
-                <User className="h-5 w-5 text-copper" />
+              <h2 className="font-display text-[24px] sm:text-[28px] font-800 text-ink tracking-[-0.03em] mb-6">
                 Your Details
               </h2>
 
-              {/* Summary card */}
-              <div className="p-4 rounded-xl bg-white border border-stone/10 mb-6">
-                <p className="text-sm font-semibold text-charcoal">{service?.name}</p>
-                <p className="text-sm text-stone mt-1">
-                  {formattedDate} at {formattedTime}
-                </p>
+              {/* Summary */}
+              <div className="p-5 rounded-2xl bg-white border border-ink/5 mb-6 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-forest/8 flex items-center justify-center shrink-0">
+                  <Sparkles className="h-5 w-5 text-forest" />
+                </div>
+                <div>
+                  <p className="font-display font-700 text-ink text-[15px]">{service?.name}</p>
+                  <p className="text-[13px] text-ink/40 mt-0.5">{fmtDate} at {fmtTime}</p>
+                </div>
               </div>
 
               {/* Form */}
               <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-label uppercase tracking-wider text-stone mb-1.5">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Adaeze Okonkwo"
-                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-charcoal placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-copper/40 transition ${
-                      errors.name ? "border-red-400" : "border-stone/20"
-                    }`}
-                  />
-                  {errors.name && (
-                    <p className="text-xs text-red-500 mt-1">{errors.name}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-label uppercase tracking-wider text-stone mb-1.5">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g. 08123456789"
-                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-charcoal placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-copper/40 transition ${
-                      errors.phone ? "border-red-400" : "border-stone/20"
-                    }`}
-                  />
-                  {errors.phone && (
-                    <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-label uppercase tracking-wider text-stone mb-1.5">
-                    Email <span className="text-stone/50">(optional)</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. adaeze@email.com"
-                    className="w-full px-4 py-3 rounded-xl border border-stone/20 bg-white text-sm text-charcoal placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-copper/40 transition"
-                  />
-                </div>
+                <Field
+                  label="Full Name"
+                  required
+                  value={name}
+                  onChange={setName}
+                  placeholder="e.g. Adaeze Okonkwo"
+                  error={errors.name}
+                />
+                <Field
+                  label="Phone Number"
+                  required
+                  type="tel"
+                  value={phone}
+                  onChange={setPhone}
+                  placeholder="e.g. 08123456789"
+                  error={errors.phone}
+                />
+                <Field
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={setEmail}
+                  placeholder="e.g. adaeze@email.com"
+                />
               </div>
 
-              {/* Confirm */}
               <div className="mt-8 flex justify-end">
                 <button
                   onClick={handleConfirm}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-copper text-charcoal font-semibold text-sm hover:bg-copper/90 transition-colors shadow-lg shadow-copper/20"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-forest text-ivory font-display font-700 text-[14px] hover:bg-forest/90 transition-all duration-300 shadow-[0_4px_24px_rgba(45,74,62,0.25)]"
                 >
                   <Check className="h-4 w-4" />
                   Confirm Booking
@@ -521,60 +455,76 @@ export default function Booking() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   CALENDAR PICKER (inline, no library)
+   FIELD — reusable form input
+   ═══════════════════════════════════════════════════════ */
+function Field({ label, required, type = "text", value, onChange, placeholder, error }) {
+  return (
+    <div>
+      <label className="block text-[10px] font-label uppercase tracking-[0.2em] text-ink/35 font-600 mb-2">
+        {label} {required && <span className="text-forest">*</span>}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={`w-full px-4 py-3.5 rounded-xl border bg-white text-[14px] text-ink placeholder:text-ink/25 focus:outline-none focus:ring-2 focus:ring-forest/20 focus:border-forest/30 transition-all duration-300 ${
+          error ? "border-red-400" : "border-ink/8"
+        }`}
+      />
+      {error && <p className="text-[12px] text-red-500 mt-1.5 font-label">{error}</p>}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   CALENDAR PICKER
    ═══════════════════════════════════════════════════════ */
 function CalendarPicker({ value, onChange, closedDays = [] }) {
   const [viewDate, setViewDate] = useState(new Date());
-
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  const startDow = getDay(monthStart); // 0=Sun
-
+  const startDow = getDay(monthStart);
   const today = startOfDay(new Date());
 
   return (
-    <div className="bg-white rounded-2xl border border-stone/10 p-4 sm:p-6 shadow-sm">
+    <div className="bg-white rounded-[20px] border border-ink/5 p-5 sm:p-7 shadow-[0_2px_16px_rgba(26,31,22,0.03)]">
       {/* Month nav */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-5">
         <button
           onClick={() => setViewDate((d) => subMonths(d, 1))}
-          className="p-2 rounded-lg hover:bg-stone/10 transition-colors"
+          className="w-9 h-9 rounded-xl hover:bg-sand/60 flex items-center justify-center transition-colors duration-300"
           aria-label="Previous month"
         >
-          <ChevronLeft className="h-4 w-4 text-charcoal" />
+          <ChevronLeft className="h-4 w-4 text-ink" />
         </button>
-        <p className="font-display text-base font-bold text-charcoal">
+        <p className="font-display text-[17px] font-700 text-ink tracking-[-0.01em]">
           {format(viewDate, "MMMM yyyy")}
         </p>
         <button
           onClick={() => setViewDate((d) => addMonths(d, 1))}
-          className="p-2 rounded-lg hover:bg-stone/10 transition-colors"
+          className="w-9 h-9 rounded-xl hover:bg-sand/60 flex items-center justify-center transition-colors duration-300"
           aria-label="Next month"
         >
-          <ChevronRight className="h-4 w-4 text-charcoal" />
+          <ChevronRight className="h-4 w-4 text-ink" />
         </button>
       </div>
 
       {/* Day labels */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="grid grid-cols-7 gap-1 mb-1">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-          <div
-            key={d}
-            className="text-center text-[10px] font-label uppercase tracking-wider text-stone py-1"
-          >
+          <div key={d} className="text-center text-[10px] font-label uppercase tracking-[0.15em] text-ink/30 font-600 py-1.5">
             {d}
           </div>
         ))}
       </div>
 
-      {/* Days grid */}
+      {/* Days */}
       <div className="grid grid-cols-7 gap-1">
-        {/* Leading blanks */}
         {Array.from({ length: startDow }).map((_, i) => (
-          <div key={`blank-${i}`} />
+          <div key={`b-${i}`} />
         ))}
-
         {days.map((day) => {
           const past = isBefore(day, today);
           const closed = closedDays.includes(getDay(day));
@@ -587,17 +537,17 @@ function CalendarPicker({ value, onChange, closedDays = [] }) {
               key={day.toISOString()}
               disabled={disabled}
               onClick={() => !disabled && onChange(day)}
-              className={`relative aspect-square rounded-lg flex items-center justify-center text-sm transition-all ${
+              className={`relative aspect-square rounded-xl flex items-center justify-center text-[14px] font-600 transition-all duration-200 ${
                 disabled
-                  ? "text-stone/30 cursor-not-allowed"
+                  ? "text-ink/15 cursor-not-allowed"
                   : selected
-                  ? "bg-copper text-charcoal font-bold ring-2 ring-copper ring-offset-2"
-                  : "text-charcoal hover:bg-copper/10"
+                  ? "bg-forest text-ivory shadow-[0_2px_12px_rgba(45,74,62,0.2)]"
+                  : "text-ink hover:bg-sand/60"
               }`}
             >
               {format(day, "d")}
               {todayMark && !selected && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-copper" />
+                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gold" />
               )}
             </button>
           );

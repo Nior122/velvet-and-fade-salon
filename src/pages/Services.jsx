@@ -1,96 +1,87 @@
-﻿import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { serviceCategories } from "../data/salonConfig";
 import CategorySection from "../components/CategorySection";
 import SectionReveal from "../components/SectionReveal";
 
-const mensCategories = Object.entries(serviceCategories).filter(
-  ([, cat]) => cat.gender === "men"
-);
-const womensCategories = Object.entries(serviceCategories).filter(
-  ([, cat]) => cat.gender === "women"
-);
-const everyoneCategories = Object.entries(serviceCategories).filter(
-  ([, cat]) => cat.gender === "everyone"
-);
+const tabs = [
+  { key: "men", label: "For Him", filter: (cat) => cat.gender === "men" },
+  { key: "women", label: "For Her", filter: (cat) => cat.gender === "women" },
+  { key: "all", label: "Everyone", filter: (cat) => cat.gender === "everyone" },
+];
 
-function GenderHeading({ label, sub }) {
-  return (
-    <SectionReveal>
-      <div className="mb-8 mt-4 first:mt-0">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="h-px flex-1 bg-stone/20" />
-          <span className="font-label text-[10px] uppercase tracking-[0.3em] text-copper font-semibold shrink-0">
-            {label}
-          </span>
-          <div className="h-px flex-1 bg-stone/20" />
-        </div>
-        {sub && (
-          <p className="text-center text-sm text-stone mt-1">{sub}</p>
-        )}
-      </div>
-    </SectionReveal>
-  );
-}
+const filtered = (fn) =>
+  Object.entries(serviceCategories).filter(([, cat]) => fn(cat));
 
 export default function Services() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("men");
 
   const handleServiceSelect = (service) => {
     navigate("/booking", { state: { selectedService: service } });
   };
 
+  const currentCategories = filtered(tabs.find((t) => t.key === activeTab).filter);
+
   return (
-    <main className="pt-24 sm:pt-28 pb-16 sm:pb-24 bg-cream min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Page header */}
-        <SectionReveal>
-          <div className="text-center mb-14">
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="font-label text-[11px] uppercase tracking-[0.25em] text-copper"
-            >
+    <main className="pt-[72px] sm:pt-[80px] pb-20 sm:pb-32 bg-ivory min-h-screen">
+      {/* Page header */}
+      <div className="bg-ink relative overflow-hidden">
+        {/* Texture */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)", backgroundSize: "20px 20px" }} />
+        <div className="relative mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 py-16 sm:py-24">
+          <SectionReveal>
+            <span className="font-label text-[11px] font-600 uppercase tracking-[0.3em] text-gold">
               Our Menu
-            </motion.span>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mt-2">
+            </span>
+            <h1 className="font-display text-[36px] sm:text-[48px] lg:text-[56px] font-900 text-ivory mt-3 tracking-[-0.04em] leading-[0.95]">
               Services
             </h1>
-            <p className="mt-3 text-stone max-w-lg mx-auto text-sm sm:text-base">
-              Everything you need, from a quick trim to a full day of pampering.
-              Select any service to jump straight into booking.
+            <p className="mt-4 text-ivory/50 max-w-md text-[15px] leading-relaxed">
+              From a quick trim to a full day of pampering — select any service to book instantly.
             </p>
-          </div>
-        </SectionReveal>
+          </SectionReveal>
 
-        {/* Men's Services */}
-        <GenderHeading label="Men's Services" sub="Haircuts, grooming, and more" />
-        {mensCategories.map(([key, cat]) => (
-          <CategorySection
-            key={key}
-            category={cat}
-            categoryKey={key}
-            onServiceSelect={handleServiceSelect}
-          />
-        ))}
+          {/* Tabs */}
+          <SectionReveal delay={0.1}>
+            <div className="flex gap-2 mt-10">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`relative px-5 py-2.5 rounded-full font-label text-[12px] font-600 uppercase tracking-[0.15em] transition-colors duration-300 ${
+                    activeTab === tab.key
+                      ? "text-ink"
+                      : "text-ivory/40 hover:text-ivory/70"
+                  }`}
+                >
+                  {activeTab === tab.key && (
+                    <motion.span
+                      layoutId="service-tab"
+                      className="absolute inset-0 bg-gold rounded-full"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </SectionReveal>
+        </div>
+      </div>
 
-        {/* Women's Services */}
-        <GenderHeading label="Women's Services" sub="Cuts, colour, braiding & nails" />
-        {womensCategories.map(([key, cat]) => (
-          <CategorySection
-            key={key}
-            category={cat}
-            categoryKey={key}
-            onServiceSelect={handleServiceSelect}
-          />
-        ))}
-
-        {/* Everyone */}
-        {everyoneCategories.length > 0 && (
-          <>
-            <GenderHeading label="Services for Everyone" sub="Spa, nails, and relaxation" />
-            {everyoneCategories.map(([key, cat]) => (
+      {/* Content area */}
+      <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 pt-12 sm:pt-16">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            {currentCategories.map(([key, cat]) => (
               <CategorySection
                 key={key}
                 category={cat}
@@ -98,8 +89,8 @@ export default function Services() {
                 onServiceSelect={handleServiceSelect}
               />
             ))}
-          </>
-        )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </main>
   );

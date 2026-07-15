@@ -4,40 +4,47 @@ import ServiceCard from "./ServiceCard";
 
 export default function CategorySection({ category, categoryKey, onServiceSelect }) {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const genderLabel =
+    category.gender === "men" ? "For Him" : category.gender === "women" ? "For Her" : "For Everyone";
 
   return (
     <motion.section
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.4 }}
-      className="mb-12 lg:mb-16"
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.5 }}
+      className="mb-16 lg:mb-20"
     >
-      {/* Category header image */}
-      <div className="relative aspect-[21/6] sm:aspect-[3/1] rounded-2xl overflow-hidden mb-6">
-        {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-stone/10" />}
+      {/* Category header — cinematic banner */}
+      <div className="relative aspect-[21/7] sm:aspect-[3/1] lg:aspect-[2.8/1] rounded-[24px] overflow-hidden mb-8">
+        {!imgLoaded && <div className="absolute inset-0 bg-sand/40 animate-pulse" />}
         <img
           src={category.image}
           alt={category.label}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
-          className={`h-full w-full object-cover transition-opacity duration-500 ${
-            imgLoaded ? "opacity-100" : "opacity-0"
+          className={`h-full w-full object-cover transition-all duration-700 ${
+            imgLoaded ? "opacity-100 scale-100" : "opacity-0 scale-105"
           }`}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 p-5 sm:p-8">
-          <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-label uppercase tracking-[0.2em] bg-copper/90 text-charcoal font-semibold mb-2">
-            {category.gender === "men" ? "Men's" : category.gender === "women" ? "Women's" : "Everyone"}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 flex items-end justify-between">
+          <div>
+            <span className="inline-block px-3 py-1 rounded-full text-[10px] font-label font-600 uppercase tracking-[0.2em] bg-gold/90 text-ink mb-3">
+              {genderLabel}
+            </span>
+            <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-800 text-ivory tracking-[-0.02em]">
+              {category.label}
+            </h3>
+          </div>
+          <span className="hidden sm:block font-label text-[11px] uppercase tracking-[0.2em] text-ivory/60 font-500">
+            {category.services.length} services
           </span>
-          <h3 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-cream">
-            {category.label}
-          </h3>
         </div>
       </div>
 
       {/* Services grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {category.services.map((service) => (
           <ServiceCard
             key={service.id}

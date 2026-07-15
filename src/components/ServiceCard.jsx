@@ -1,59 +1,75 @@
-﻿import { useState } from "react";
+﻿import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { formatPrice, formatDuration } from "../hooks/useBooking";
 
 export default function ServiceCard({ service, onSelect }) {
   const [loaded, setLoaded] = useState(false);
+  const ref = useRef(null);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setMouse({
+      x: (e.clientX - rect.left - rect.width / 2) / 20,
+      y: (e.clientY - rect.top - rect.height / 2) / 20,
+    });
+  };
+
+  const handleMouseLeave = () => setMouse({ x: 0, y: 0 });
 
   return (
     <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       whileInView={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 24 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0, y: 48 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      animate={{ x: mouse.x, y: mouse.y }}
       onClick={() => onSelect?.(service)}
-      className="group cursor-pointer rounded-2xl bg-white shadow-sm hover:shadow-lg transition-shadow overflow-hidden flex flex-col"
+      className="group cursor-pointer rounded-[20px] bg-white overflow-hidden shadow-[0_2px_20px_rgba(26,31,22,0.04)] hover:shadow-[0_8px_40px_rgba(26,31,22,0.1)] transition-shadow duration-500 flex flex-col"
     >
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-stone/10">
+      {/* Image with zoom + overlay */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-sand/30">
         {!loaded && (
-          <div className="absolute inset-0 animate-pulse bg-stone/10" />
+          <div className="absolute inset-0 bg-sand/40 animate-pulse" />
         )}
         <img
           src={service.image}
           alt={service.name}
           loading="lazy"
           onLoad={() => setLoaded(true)}
-          className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+          className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-110 ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
         />
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-colors duration-500 flex items-end p-5">
+          <span className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400 text-ivory text-sm font-label font-600 flex items-center gap-1.5">
+            Book Now <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-4 sm:p-5">
-        <h3 className="font-display text-base sm:text-lg font-bold text-charcoal leading-tight">
-          {service.name}
-        </h3>
-        <p className="mt-1 text-sm text-stone leading-relaxed flex-1">
+      <div className="flex flex-col flex-1 p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display text-[17px] font-700 text-ink leading-snug">
+            {service.name}
+          </h3>
+          <span className="font-display text-[15px] font-700 text-forest shrink-0">
+            {formatPrice(service.price)}
+          </span>
+        </div>
+        <p className="mt-2 text-[13px] text-ink/50 leading-relaxed flex-1">
           {service.description}
         </p>
-
-        <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-stone">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              {formatDuration(service.duration)}
-            </span>
-            <span className="font-semibold text-copper text-sm">
-              {formatPrice(service.price)}
-            </span>
-          </div>
-          <span className="flex items-center gap-1 text-xs font-medium text-copper opacity-0 group-hover:opacity-100 transition-opacity">
-            Book <ArrowRight className="h-3.5 w-3.5" />
+        <div className="mt-3 pt-3 border-t border-ink/5">
+          <span className="text-[11px] font-label uppercase tracking-[0.15em] text-ink/40 font-600">
+            {formatDuration(service.duration)}
           </span>
         </div>
       </div>
