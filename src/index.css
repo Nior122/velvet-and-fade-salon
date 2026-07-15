@@ -1,18 +1,18 @@
 ﻿@import "tailwindcss";
 
 @theme {
-  --color-ink: #1A1F16;
-  --color-forest: #2D4A3E;
-  --color-sage: #7A9E7E;
-  --color-sand: #E8DDD3;
-  --color-ivory: #FAF7F2;
-  --color-gold: #C4A265;
-  --color-gold-light: #D4BC8A;
-  --color-ink-soft: #3A4035;
+  --color-espresso: #2C2220;
+  --color-espresso-soft: #3D302C;
+  --color-mauve: #C4A08A;
+  --color-mauve-deep: #A67B5B;
+  --color-ivory: #FAF5F0;
+  --color-parchment: #F2EBE3;
+  --color-champagne: #C9B99A;
+  --color-plum: #6B3A4A;
 
-  --font-display: "Outfit", system-ui, sans-serif;
-  --font-body: "DM Sans", system-ui, sans-serif;
-  --font-label: "Outfit", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-label: "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
 @layer base {
@@ -21,7 +21,7 @@
   }
   body {
     font-family: var(--font-body);
-    color: var(--color-ink);
+    color: var(--color-espresso);
     background: var(--color-ivory);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -30,13 +30,7 @@
     font-family: var(--font-display);
   }
   ::selection {
-    background-color: var(--color-gold);
-    color: var(--color-ink);
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+    background-color: var(--color-mauve);
+    color: var(--color-espresso);
   }
 }

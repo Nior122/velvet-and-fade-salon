@@ -34,7 +34,7 @@ export default function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-ivory/90 backdrop-blur-xl shadow-[0_1px_0_0_rgba(45,74,62,0.08)]"
+            ? "bg-ivory/90 backdrop-blur-xl shadow-[0_1px_0_0_rgba(44,34,32,0.06)]"
             : "bg-transparent"
         }`}
       >
@@ -42,34 +42,33 @@ export default function Header() {
           <div className="flex h-[72px] items-center justify-between">
             <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setOpen(false)}>
               <span
-                className={`font-display text-[22px] font-[800] tracking-[-0.03em] transition-colors duration-300 ${
-                  isLight ? "text-ivory" : "text-ink"
+                className={`font-display text-[24px] font-semibold tracking-[-0.02em] transition-colors duration-300 ${
+                  isLight ? "text-ivory" : "text-espresso"
                 }`}
               >
                 {salon.name.split(" ")[0]}
               </span>
               <span
-                className={`font-display text-[22px] font-[800] tracking-[-0.03em] transition-colors duration-300 ${
-                  isLight ? "text-gold" : "text-forest"
+                className={`font-display text-[24px] font-semibold tracking-[-0.02em] transition-colors duration-300 ${
+                  isLight ? "text-champagne" : "text-mauve-deep"
                 }`}
               >
                 {salon.name.split(" & ")[1]}
               </span>
             </Link>
 
-            {/* Desktop nav */}
             <nav className="hidden items-center gap-1 lg:flex">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) =>
-                    `relative px-4 py-2 font-label text-[13px] font-[600] uppercase tracking-[0.15em] transition-colors duration-300 ${
+                    `relative px-4 py-2 font-label text-[12px] font-semibold uppercase tracking-[0.18em] transition-colors duration-300 ${
                       isActive
-                        ? isLight ? "text-gold" : "text-forest"
+                        ? isLight ? "text-champagne" : "text-plum"
                         : isLight
-                          ? "text-ivory/70 hover:text-ivory"
-                          : "text-ink/50 hover:text-ink"
+                          ? "text-ivory/60 hover:text-ivory"
+                          : "text-espresso/40 hover:text-espresso"
                     }`
                   }
                 >
@@ -79,8 +78,8 @@ export default function Header() {
                       {isActive && (
                         <motion.span
                           layoutId="nav-underline"
-                          className={`absolute bottom-0 left-4 right-4 h-[2px] ${
-                            isLight ? "bg-gold" : "bg-forest"
+                          className={`absolute bottom-0 left-4 right-4 h-[1.5px] rounded-full ${
+                            isLight ? "bg-champagne" : "bg-plum"
                           }`}
                           transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         />
@@ -91,11 +90,10 @@ export default function Header() {
               ))}
             </nav>
 
-            {/* Mobile hamburger */}
             <button
               onClick={() => setOpen(!open)}
               className={`lg:hidden p-2 -mr-2 rounded-xl transition-colors duration-300 ${
-                isLight ? "text-ivory hover:bg-ivory/10" : "text-ink hover:bg-ink/5"
+                isLight ? "text-ivory hover:bg-ivory/10" : "text-espresso hover:bg-espresso/5"
               }`}
               aria-label={open ? "Close menu" : "Open menu"}
             >
@@ -105,7 +103,6 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Full-screen mobile overlay */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -113,7 +110,7 @@ export default function Header() {
             animate={{ clipPath: "circle(150% at calc(100% - 40px) 36px)" }}
             exit={{ clipPath: "circle(0% at calc(100% - 40px) 36px)" }}
             transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
-            className="fixed inset-0 z-[60] bg-ink flex flex-col justify-center items-center"
+            className="fixed inset-0 z-[60] bg-espresso flex flex-col justify-center items-center"
           >
             <nav className="flex flex-col items-center gap-2">
               {navLinks.map((link, i) => (
@@ -128,8 +125,8 @@ export default function Header() {
                     to={link.to}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `block font-display text-[42px] sm:text-[56px] font-[800] tracking-[-0.03em] transition-colors ${
-                        isActive ? "text-gold" : "text-ivory/80 hover:text-ivory"
+                      `block font-display text-[44px] sm:text-[58px] font-semibold tracking-[-0.02em] transition-colors ${
+                        isActive ? "text-champagne" : "text-ivory/70 hover:text-ivory"
                       }`
                     }
                   >
@@ -149,7 +146,7 @@ export default function Header() {
                 <a
                   key={i}
                   href="#"
-                  className="w-10 h-10 rounded-full border border-ivory/20 flex items-center justify-center text-ivory/50 hover:text-gold hover:border-gold/50 transition-all"
+                  className="w-10 h-10 rounded-full border border-ivory/15 flex items-center justify-center text-ivory/35 hover:text-champagne hover:border-champagne/40 transition-all"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
