@@ -16,7 +16,7 @@ function ScrollToTop() {
 
 function PageTransition({ children }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}>
       {children}
     </motion.div>
   );
@@ -49,14 +49,14 @@ function AppLoader({ onComplete }) {
   }, [onComplete]);
 
   return (
-    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-center">
-        <span className="font-display text-[28px] font-extrabold uppercase text-white tracking-[-0.04em]">
-          Velvet <span className="text-lime">&</span> Fade
+    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.35 }} className="fixed inset-0 z-[100] bg-ivory flex flex-col items-center justify-center">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-center">
+        <span className="font-display text-[30px] text-brown tracking-[-0.02em]">
+          Velvet <span className="italic text-rose">&</span> Fade
         </span>
       </motion.div>
-      <div className="mt-8 w-24 h-[3px] bg-white/10 overflow-hidden">
-        <motion.div className="h-full bg-lime" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
+      <div className="mt-8 w-28 h-[2px] bg-blush rounded-full overflow-hidden">
+        <motion.div className="h-full bg-rose rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
       </div>
     </motion.div>
   );

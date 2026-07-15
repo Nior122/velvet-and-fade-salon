@@ -1,17 +1,19 @@
 ﻿@import "tailwindcss";
 
 @theme {
-  --color-black: #111111;
-  --color-white: #FFFFFF;
-  --color-lime: #C8FF00;
-  --color-gray: #666666;
-  --color-gray-light: #E5E5E5;
-  --color-offwhite: #F5F5F3;
+  --color-brown: #2E2420;
+  --color-brown-soft: #4A3D37;
+  --color-rose: #C4908A;
+  --color-rose-deep: #A66F68;
+  --color-sage: #8FA98F;
+  --color-sage-deep: #6B8A6B;
+  --color-ivory: #FAF6F1;
+  --color-blush: #F0E4DC;
+  --color-gold: #B8A07A;
 
-  --font-display: "Syne", system-ui, sans-serif;
-  --font-body: "Space Grotesk", system-ui, sans-serif;
-  --font-label: "Space Grotesk", system-ui, sans-serif;
-  --font-mono: "Space Mono", monospace;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-label: "DM Sans", system-ui, sans-serif;
 }
 
 @layer base {
@@ -20,8 +22,8 @@
   }
   body {
     font-family: var(--font-body);
-    color: var(--color-black);
-    background: var(--color-offwhite);
+    color: var(--color-brown);
+    background: var(--color-ivory);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -29,7 +31,7 @@
     font-family: var(--font-display);
   }
   ::selection {
-    background-color: var(--color-lime);
-    color: var(--color-black);
+    background-color: var(--color-rose);
+    color: white;
   }
 }

@@ -7,7 +7,7 @@ import { salon } from "../data/salonConfig";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Services" },
-  { to: "/booking", label: "Book" },
+  { to: "/booking", label: "Book Now" },
   { to: "/about", label: "About" },
 ];
 
@@ -16,7 +16,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -27,54 +27,69 @@ export default function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const isLight = !scrolled && !open;
-
   return (
     <>
+      {/* Solid header — always readable */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-offwhite/95 backdrop-blur-xl border-b border-black/8"
-            : "bg-transparent"
+            ? "bg-ivory/95 backdrop-blur-xl shadow-[0_1px_0_0_rgba(46,36,32,0.06)]"
+            : "bg-ivory"
         }`}
       >
         <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
-          <div className="flex h-[64px] items-center justify-between">
-            <Link to="/" className="flex items-baseline gap-1 group" onClick={() => setOpen(false)}>
-              <span className={`font-display text-[20px] font-extrabold uppercase tracking-[-0.03em] transition-colors ${isLight ? "text-white" : "text-black"}`}>
+          <div className="flex h-[68px] items-center justify-between">
+            {/* Brand */}
+            <Link to="/" className="flex items-baseline gap-1.5" onClick={() => setOpen(false)}>
+              <span className="font-display text-[22px] text-brown tracking-[-0.01em]">
                 {salon.name.split(" ")[0]}
               </span>
-              <span className="font-display text-[20px] font-extrabold uppercase tracking-[-0.03em] text-lime">
-                &
-              </span>
-              <span className={`font-display text-[20px] font-extrabold uppercase tracking-[-0.03em] transition-colors ${isLight ? "text-white" : "text-black"}`}>
+              <span className="font-display text-[22px] text-rose italic">&</span>
+              <span className="font-display text-[22px] text-brown tracking-[-0.01em]">
                 {salon.name.split(" & ")[1]}
               </span>
             </Link>
 
-            <nav className="hidden items-center gap-0 lg:flex">
+            {/* Desktop nav */}
+            <nav className="hidden items-center gap-1 lg:flex">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) =>
-                    `px-4 py-2 font-label text-[12px] font-bold uppercase tracking-[0.15em] transition-all duration-200 ${
+                    `relative px-4 py-2 text-[13px] font-semibold tracking-wide transition-colors duration-200 ${
                       isActive
-                        ? "bg-lime text-black"
-                        : isLight
-                          ? "text-white/60 hover:text-white hover:bg-white/10"
-                          : "text-black/40 hover:text-black hover:bg-black/5"
+                        ? "text-rose"
+                        : "text-brown/50 hover:text-brown"
                     }`
                   }
                 >
-                  {link.label}
+                  {({ isActive }) => (
+                    <>
+                      {link.label}
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-dot"
+                          className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-rose"
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                    </>
+                  )}
                 </NavLink>
               ))}
+              <NavLink
+                to="/booking"
+                className="ml-3 px-5 py-2 bg-brown text-ivory text-[12px] font-semibold uppercase tracking-wider hover:bg-brown-soft transition-colors duration-200"
+              >
+                Book
+              </NavLink>
             </nav>
 
+            {/* Mobile hamburger */}
             <button
               onClick={() => setOpen(!open)}
-              className={`lg:hidden w-10 h-10 flex items-center justify-center transition-colors ${isLight ? "text-white" : "text-black"}`}
+              className="lg:hidden w-10 h-10 flex items-center justify-center text-brown hover:bg-blush/50 transition-colors rounded-lg"
               aria-label={open ? "Close menu" : "Open menu"}
             >
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -83,6 +98,7 @@ export default function Header() {
         </div>
       </header>
 
+      {/* Mobile menu — full screen, solid brown background */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -90,22 +106,22 @@ export default function Header() {
             animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
             exit={{ clipPath: "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)" }}
             transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[60] bg-black flex flex-col justify-between py-24 px-8 sm:px-12"
+            className="fixed inset-0 z-[60] bg-brown flex flex-col justify-between py-28 px-8 sm:px-12"
           >
-            <nav className="flex flex-col gap-0 mt-12">
+            <nav className="flex flex-col mt-4">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.to}
-                  initial={{ opacity: 0, x: 40 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.15 + i * 0.06, duration: 0.4 }}
+                  transition={{ delay: 0.12 + i * 0.05, duration: 0.4 }}
                 >
                   <NavLink
                     to={link.to}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `block font-display text-[48px] sm:text-[64px] font-extrabold uppercase tracking-[-0.04em] leading-[1.05] transition-colors border-b border-white/10 pb-3 mb-3 ${
-                        isActive ? "text-lime" : "text-white hover:text-lime"
+                      `block font-display text-[42px] sm:text-[56px] leading-[1.15] border-b border-ivory/10 pb-3 mb-3 transition-colors ${
+                        isActive ? "text-rose" : "text-ivory/70 hover:text-ivory"
                       }`
                     }
                   >
@@ -113,17 +129,30 @@ export default function Header() {
                   </NavLink>
                 </motion.div>
               ))}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+              >
+                <NavLink
+                  to="/booking"
+                  onClick={() => setOpen(false)}
+                  className="inline-block mt-4 px-8 py-3 bg-rose text-ivory text-[13px] font-semibold uppercase tracking-wider hover:bg-rose-deep transition-colors"
+                >
+                  Book Now
+                </NavLink>
+              </motion.div>
             </nav>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.45 }}
               className="flex gap-4"
             >
               {[Camera, Globe, AtSign].map((Icon, i) => (
                 <a key={i} href="#"
-                  className="w-10 h-10 border border-white/15 flex items-center justify-center text-white/30 hover:text-lime hover:border-lime/40 transition-all">
+                  className="w-10 h-10 border border-ivory/15 flex items-center justify-center text-ivory/30 hover:text-gold hover:border-gold/40 transition-all">
                   <Icon className="h-4 w-4" />
                 </a>
               ))}

@@ -24,23 +24,24 @@ export default function Services() {
   const currentCategories = filtered(tabs.find((t) => t.key === activeTab).filter);
 
   return (
-    <main className="pt-[64px] sm:pt-[72px] pb-20 sm:pb-32 bg-offwhite min-h-screen">
-      <div className="bg-black relative">
+    <main className="pt-[68px] pb-20 sm:pb-28 bg-ivory min-h-screen">
+      {/* Page header */}
+      <div className="bg-brown relative overflow-hidden">
         <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 py-16 sm:py-24">
           <SectionReveal>
-            <span className="font-label text-[10px] font-bold uppercase tracking-[0.35em] text-lime">Our Menu</span>
-            <h1 className="font-display text-[36px] sm:text-[48px] lg:text-[56px] font-extrabold uppercase text-white mt-3 tracking-[-0.04em] leading-[0.95]">Services</h1>
-            <p className="mt-4 text-white/40 max-w-md text-[14px] leading-relaxed">Select any service to book instantly.</p>
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-rose">Our Menu</span>
+            <h1 className="font-display text-[36px] sm:text-[48px] lg:text-[56px] text-ivory mt-3 tracking-[-0.02em] leading-[0.95]">Services</h1>
+            <p className="mt-4 text-ivory/45 max-w-md text-[15px] leading-relaxed">Select any service to book instantly.</p>
           </SectionReveal>
 
           <SectionReveal delay={0.1}>
-            <div className="flex gap-0 mt-10 border border-white/15 inline-flex">
+            <div className="flex gap-0 mt-10 border border-ivory/15 inline-flex rounded-lg overflow-hidden">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-6 py-2.5 font-label text-[11px] font-bold uppercase tracking-[0.15em] transition-all duration-200 ${
-                    activeTab === tab.key ? "bg-lime text-black" : "text-white/40 hover:text-white hover:bg-white/5"
+                  className={`px-6 py-2.5 text-[12px] font-bold uppercase tracking-[0.15em] transition-all duration-200 ${
+                    activeTab === tab.key ? "bg-rose text-ivory" : "text-ivory/40 hover:text-ivory hover:bg-ivory/5"
                   }`}
                 >
                   {tab.label}
@@ -58,7 +59,7 @@ export default function Services() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.3 }}
           >
             {currentCategories.map(([key, cat]) => (
               <CategorySection key={key} category={cat} categoryKey={key} onServiceSelect={handleServiceSelect} />
