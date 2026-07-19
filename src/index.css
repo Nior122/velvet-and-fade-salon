@@ -1,35 +1,169 @@
 ﻿@import "tailwindcss";
 
-@theme {
-  --color-espresso: #2A1E1B;
-  --color-ivory: #FAF7F2;
-  --color-champagne: #C9A66B;
-  --color-rose: #D79AA5;
-  --color-copper: #B86B4B;
-  --color-charcoal: #3C302B;
-  --color-success: #6E9A7C;
-  --color-blush: #F0E8DF;
+/* ═══════════════════════════════════════════════
+   VELVET & FADE — Dual-mode luxury salon palette
+   ═══════════════════════════════════════════════
 
+   Token convention:
+     surf-0    = page background (deepest)
+     surf-1    = card / raised surface
+     surf-2    = alt surface (subtle separation)
+     surf-3    = hover / active tint
+     t-prime   = primary text
+     t-sub     = secondary / muted text
+     accent    = champagne / gold accent
+     accent-d  = deep bronze accent
+     border    = subtle border
+   ───────────────────────────────────────────────
+
+   Dark mode (default salon vibe): deep moody espresso-rich surfaces
+   Light mode (toggled): warm sepia paper tones — richer differentiation
+   ═════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Dark mode tokens (also :root defaults since our default is dark) ── */
+  --color-surf-0: #100B08;
+  --color-surf-1: #1C1511;
+  --color-surf-2: #2B221C;
+  --color-surf-3: #3A3028;
+  --color-t-prime: #EDE8E2;
+  --color-t-sub: #BDB5AB;
+  --color-accent: #C4A068;
+  --color-accent-d: #8B5E3C;
+  --color-border: #3D342C;
+
+  /* shadows for dark mode */
+  --color-shadow-dm: 0 0 0 100% transparent;
+
+  /* blue/red utility (price separator / error) */
+  --color-success: #6E9A7C;
+
+  /* fonts unchanged */
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
+  --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ── Light mode override (applied via .light class) ── */
+:root.light {
+  --color-surf-0: #F5F0E8;
+  --color-surf-1: #FCF9F4;
+  --color-surf-2: #EAE2D7;
+  --color-surf-3: #DED4C5;
+  --color-t-prime: #1C1410;
+  --color-t-sub: #5E544C;
+  --color-accent: #B88A44;
+  --color-accent-d: #9D6932;
+  --color-border: #D4C8B8;
+}
+
+/* ── Base layer ── */
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
   body {
     font-family: var(--font-body);
-    color: var(--color-charcoal);
-    background: var(--color-ivory);
+    color: var(--color-t-prime);
+    background: var(--color-surf-0);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    transition: background-color 0.4s var(--ease-lux), color 0.4s var(--ease-lux);
   }
   h1, h2, h3, h4, h5 {
     font-family: var(--font-display);
+    font-weight: 300;
   }
+
   ::selection {
-    background-color: var(--color-champagne);
-    color: white;
+    background-color: var(--color-accent);
+    color: var(--color-surf-0);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ── Editorial / luxury utilities ── */
+@utility kicker {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  font-size: clamp(48px, 9vw, 120px);
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  font-size: clamp(36px, 6vw, 72px);
+}
+
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Subtle film grain */
+@utility grain {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@utility link-underline {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s var(--ease-lux);
+  }
+  &:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ── Respect reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

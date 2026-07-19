@@ -1,10 +1,20 @@
 ﻿export const salon = {
   name: "Velvet & Fade",
   tagline: "Where Every Style Becomes Your Signature",
+  city: "Lekki, Lagos",
   phone: "+2348123456789",
   whatsappPhone: "2348123456789",
   email: "hello@velvetandfade.ng",
   address: "14 Admiralty Way, Lekki Phase 1, Lagos",
+  // Owner-editable external booking link. Leave empty ("") to use the built-in booking flow.
+  bookingUrl: "",
+  directionsUrl:
+    "https://www.google.com/maps/dir/?api=1&destination=14+Admiralty+Way+Lekki+Phase+1+Lagos",
+  social: {
+    instagram: "https://instagram.com/",
+    facebook: "https://facebook.com/",
+    twitter: "https://twitter.com/",
+  },
   mapEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.5!2d3.465!3d6.45!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMjcnMDAuMCJOIDDCsDI3JzU0LjAiRQ!5e0!3m2!1sen!2sng",
   hours: {
@@ -339,6 +349,39 @@ export const serviceCategories = {
       },
     ],
   },
+};
+
+// ── Editorial content (owner-editable copy) ──
+export const heroContent = {
+  eyebrow: "Premium Unisex Salon — Lekki, Lagos",
+  headline: ["Your Signature", "Look Starts", "Here"],
+  emphasis: 2, // index of the line rendered in italic accent
+  sub: "Precision haircuts, colour, braiding, nails and spa treatments — crafted with intention in the heart of Lekki.",
+};
+
+export const experience = {
+  eyebrow: "The Velvet & Fade Experience",
+  statement:
+    "More than a service. A moment to slow down, reset, and leave feeling like your best self.",
+  body: "One salon where men and women receive the same calibre of care, under one roof. Every appointment is unhurried, considered, and finished to a standard we're proud to put our name to.",
+  pillars: [
+    {
+      title: "Precision",
+      text: "Sharp, deliberate work — from a classic taper to a full colour transformation.",
+    },
+    {
+      title: "Comfort",
+      text: "A calm, unhurried space designed to feel like a retreat, not a queue.",
+    },
+    {
+      title: "Personal attention",
+      text: "Time taken to understand what suits you, before a single tool is picked up.",
+    },
+    {
+      title: "One roof",
+      text: "Hair, grooming, nails and spa — all under the same considered standard.",
+    },
+  ],
 };
 
 export const signatureServices = [

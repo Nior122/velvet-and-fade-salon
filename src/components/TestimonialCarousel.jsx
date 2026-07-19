@@ -43,17 +43,17 @@ export default function TestimonialCarousel({ testimonials }) {
             transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center"
           >
-            <Quote className="h-10 w-10 text-champagne/20 mx-auto mb-8" />
-            <p className="font-display text-[24px] sm:text-[30px] lg:text-[34px] text-ivory/90 leading-[1.5] font-light italic">
+            <Quote className="h-10 w-10 text-accent/30 mx-auto mb-8" />
+            <p className="font-display text-[24px] sm:text-[30px] lg:text-[34px] text-t-prime leading-[1.5] font-light italic">
               "{t.text}"
             </p>
             <div className="mt-8 flex items-center justify-center gap-1">
               {[...Array(t.rating)].map((_, i) => (
-                <Star key={i} className="h-3.5 w-3.5 fill-champagne text-champagne" />
+                <Star key={i} className="h-3.5 w-3.5 fill-accent text-accent" />
               ))}
             </div>
-            <p className="mt-4 text-[14px] text-ivory/70 font-medium">{t.name}</p>
-            <p className="text-[12px] text-ivory/30 mt-1">{t.service}</p>
+            <p className="mt-4 text-[14px] text-t-prime font-medium">{t.name}</p>
+            <p className="text-[12px] text-t-sub mt-1">{t.service}</p>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -61,7 +61,7 @@ export default function TestimonialCarousel({ testimonials }) {
       <div className="flex items-center justify-center gap-6 mt-10">
         <button
           onClick={prev}
-          className="w-10 h-10 rounded-full border border-ivory/15 flex items-center justify-center text-ivory/40 hover:text-ivory hover:border-ivory/30 transition-all"
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-t-sub hover:text-t-prime hover:border-accent transition-all"
           aria-label="Previous testimonial"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -74,8 +74,8 @@ export default function TestimonialCarousel({ testimonials }) {
               onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
               className={`transition-all duration-300 rounded-full ${
                 i === current
-                  ? "w-8 h-2 bg-champagne"
-                  : "w-2 h-2 bg-ivory/15 hover:bg-ivory/30"
+                  ? "w-8 h-2 bg-accent"
+                  : "w-2 h-2 bg-border hover:bg-t-sub"
               }`}
               aria-label={`Go to testimonial ${i + 1}`}
             />
@@ -84,7 +84,7 @@ export default function TestimonialCarousel({ testimonials }) {
 
         <button
           onClick={next}
-          className="w-10 h-10 rounded-full border border-ivory/15 flex items-center justify-center text-ivory/40 hover:text-ivory hover:border-ivory/30 transition-all"
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-t-sub hover:text-t-prime hover:border-accent transition-all"
           aria-label="Next testimonial"
         >
           <ChevronRight className="h-4 w-4" />

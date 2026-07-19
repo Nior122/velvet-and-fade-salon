@@ -1,87 +1,109 @@
 ﻿import { useState, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
 import { salon } from "../data/salonConfig";
+import { useDarkMode } from "../context/DarkModeProvider";
+import BookButton from "./BookButton";
 
 const navLinks = [
   { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
   { to: "/services", label: "Services" },
   { to: "/gallery", label: "Gallery" },
   { to: "/team", label: "Our Team" },
   { to: "/pricing", label: "Pricing" },
-  { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
+  const { dark, toggle } = useDarkMode();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
+    document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
+
+  const radix = scrolled ? (dark ? "bg-surf-1/85" : "bg-surf-1/85") : "bg-transparent";
+  const borderRadix = scrolled ? "border-b border-border/30" : "";
+
+  const navLinkCls = ({ isActive }) =>
+    `relative px-3.5 py-2 text-[12.5px] tracking-wide transition-colors duration-300 ${
+      isActive
+        ? "text-t-prime"
+        : "text-t-sub hover:text-t-prime"
+    }`;
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-ivory/70 backdrop-blur-2xl shadow-[0_1px_0_0_rgba(42,30,27,0.05)]"
-            : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 backdrop-blur-xl ${radix} ${borderRadix}`}
       >
         <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16">
-          <div className="flex h-[76px] items-center justify-between">
-            <Link to="/" className="flex items-baseline gap-1.5" onClick={() => setOpen(false)}>
-              <span className={`font-display text-[24px] tracking-[-0.01em] transition-colors duration-500 ${scrolled ? "text-espresso" : "text-ivory"}`}>
-                {salon.name.split(" ")[0]}
-              </span>
-              <span className={`font-display text-[24px] italic transition-colors duration-500 ${scrolled ? "text-champagne" : "text-champagne"}`}>&</span>
-              <span className={`font-display text-[24px] tracking-[-0.01em] transition-colors duration-500 ${scrolled ? "text-espresso" : "text-ivory"}`}>
-                {salon.name.split(" & ")[1]}
+          <div className="flex h-[74px] items-center justify-between">
+            <Link to="/" aria-label="Velvet & Fade — home" onClick={() => setOpen(false)}>
+              <span className="flex items-baseline gap-1.5 leading-none">
+                <span className="font-display text-[23px] tracking-[-0.01em] text-t-prime transition-colors duration-500">
+                  Velvet
+                </span>
+                <span className="font-display text-[23px] italic text-accent transition-colors duration-500">&amp;</span>
+                <span className="font-display text-[23px] tracking-[-0.01em] text-t-prime transition-colors duration-500">
+                  Fade
+                </span>
               </span>
             </Link>
 
-            <nav className="hidden items-center gap-0.5 xl:flex">
+            <nav className="hidden items-center gap-1 xl:flex" aria-label="Primary">
               {navLinks.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className={({ isActive }) =>
-                    `px-3.5 py-2 text-[12.5px] font-medium tracking-wide transition-all duration-300 rounded-full ${
-                      isActive
-                        ? scrolled ? "text-copper bg-copper/5" : "text-champagne bg-ivory/10"
-                        : scrolled ? "text-charcoal/50 hover:text-charcoal hover:bg-charcoal/5" : "text-ivory/60 hover:text-ivory hover:bg-ivory/10"
-                    }`
-                  }
-                >
-                  {link.label}
+                <NavLink key={link.to} to={link.to} end={link.to === "/"} className={navLinkCls}>
+                  {({ isActive }) => (
+                    <>
+                      {link.label}
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-underline"
+                          className="absolute left-3.5 right-3.5 -bottom-0.5 h-px bg-accent"
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                        />
+                      )}
+                    </>
+                  )}
                 </NavLink>
               ))}
-              <NavLink
-                to="/booking"
-                className="ml-3 px-6 py-2.5 bg-copper text-ivory text-[12px] font-semibold uppercase tracking-wider rounded-full hover:bg-copper/90 transition-all duration-300 shadow-[0_2px_12px_rgba(184,107,75,0.3)]"
-              >
+              <BookButton className="ml-4 inline-flex items-center gap-1.5 px-6 py-2.5 bg-accent-d text-t-prime text-[12px] font-medium uppercase tracking-[0.15em] rounded-full hover:opacity-90 transition-colors duration-300">
                 Book Now
-              </NavLink>
+              </BookButton>
             </nav>
 
-            <button
-              onClick={() => setOpen(!open)}
-              className={`xl:hidden w-11 h-11 flex items-center justify-center transition-all rounded-full ${scrolled ? "text-espresso hover:bg-espresso/5" : "text-ivory hover:bg-ivory/10"}`}
-              aria-label={open ? "Close menu" : "Open menu"}
-            >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Dark / Light toggle */}
+              <button
+                onClick={toggle}
+                className="w-11 h-11 flex items-center justify-center rounded-full text-t-sub hover:text-t-prime hover:bg-surf-2/60 xl:hover:bg-surf-3/40 transition-colors"
+                aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {dark ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+              </button>
+
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setOpen(!open)}
+                className="w-11 h-11 xl:hidden flex items-center justify-center rounded-full text-t-sub hover:text-t-prime hover:bg-surf-2/60 transition-colors"
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+              >
+                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -92,23 +114,39 @@ export default function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-espresso/95 backdrop-blur-3xl flex flex-col justify-between py-32 px-8 sm:px-14"
+            transition={{ duration: 0.35 }}
+            className="fixed inset-0 z-[60] bg-surf-0 grain overflow-y-auto flex flex-col justify-between py-24 px-8 sm:px-14"
           >
-            <nav className="flex flex-col mt-4">
+            <div className="flex items-center justify-between">
+              <span className="flex items-baseline gap-1.5 leading-none">
+                <span className="font-display text-[23px] tracking-[-0.01em] text-t-prime">Velvet</span>
+                <span className="font-display text-[23px] italic text-accent">&amp;</span>
+                <span className="font-display text-[23px] tracking-[-0.01em] text-t-prime">Fade</span>
+              </span>
+              <button
+                onClick={() => setOpen(false)}
+                className="w-11 h-11 flex items-center justify-center text-t-sub hover:text-t-prime rounded-full hover:bg-surf-2/60"
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col" aria-label="Mobile">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.to}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.08 + i * 0.04, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.06 + i * 0.045, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <NavLink
                     to={link.to}
+                    end={link.to === "/"}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `block font-display text-[48px] sm:text-[64px] leading-[1.1] border-b border-ivory/8 pb-3 mb-3 transition-colors ${
-                        isActive ? "text-champagne" : "text-ivory/50 hover:text-ivory"
+                      `block font-display text-[42px] sm:text-[56px] leading-[1.15] border-b border-border py-3 transition-colors ${
+                        isActive ? "text-accent italic" : "text-t-sub hover:text-t-prime"
                       }`
                     }
                   >
@@ -117,17 +155,17 @@ export default function Header() {
                 </motion.div>
               ))}
               <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, duration: 0.45 }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
               >
-                <Link
-                  to="/booking"
+                <BookButton
                   onClick={() => setOpen(false)}
-                  className="inline-block mt-6 px-10 py-4 bg-copper text-ivory text-[13px] font-semibold uppercase tracking-wider rounded-full hover:bg-copper/90 transition-all shadow-[0_4px_20px_rgba(184,107,75,0.3)]"
+                  className="mt-8 inline-flex items-center gap-2 px-9 py-4 bg-accent text-surf-0 text-[13px] font-semibold uppercase tracking-[0.15em] rounded-full hover:opacity-90 transition-colors"
                 >
-                  Book Now
-                </Link>
+                  Book Your Appointment
+                  <ArrowUpRight className="h-4 w-4" />
+                </BookButton>
               </motion.div>
             </nav>
 
@@ -135,10 +173,10 @@ export default function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-ivory/20 text-[12px] tracking-wider"
+              className="text-t-sub text-[12.5px] tracking-wide font-light space-y-1"
             >
               <p>{salon.address}</p>
-              <p className="mt-1">{salon.phone}</p>
+              <a href={`tel:${salon.phone}`} className="hover:text-accent transition-colors">{salon.phone}</a>
             </motion.div>
           </motion.div>
         )}

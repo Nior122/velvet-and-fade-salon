@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import MobileActionBar from "./components/MobileActionBar";
 import Home from "./pages/Home";
 import Services from "./pages/Services";
 import Gallery from "./pages/Gallery";
@@ -57,14 +58,15 @@ function AppLoader({ onComplete }) {
   }, [onComplete]);
 
   return (
-    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="fixed inset-0 z-[100] bg-espresso flex flex-col items-center justify-center">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
-        <span className="font-display text-[36px] text-ivory tracking-[-0.02em] font-light">
-          Velvet <span className="italic text-champagne">&</span> Fade
+    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.5 }} className="fixed inset-0 z-[100] bg-surf-0 grain flex flex-col items-center justify-center">
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center">
+        <span className="font-display text-[40px] text-t-prime tracking-[-0.02em] font-light">
+          Velvet <span className="italic text-accent">&amp;</span> Fade
         </span>
+        <p className="mt-3 text-[10px] uppercase tracking-[0.4em] text-t-sub">Lekki · Lagos</p>
       </motion.div>
-      <div className="mt-10 w-32 h-[2px] bg-ivory/10 rounded-full overflow-hidden">
-        <motion.div className="h-full bg-champagne rounded-full" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
+      <div className="mt-10 w-36 h-px bg-border overflow-hidden">
+        <motion.div className="h-full bg-accent" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
       </div>
     </motion.div>
   );
@@ -80,6 +82,7 @@ function App() {
         <ScrollToTop />
         <div className="flex-1"><AnimatedRoutes /></div>
         <Footer />
+        <MobileActionBar />
       </div>
     </BrowserRouter>
   );
